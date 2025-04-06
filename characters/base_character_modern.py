@@ -4,19 +4,34 @@ import time
 class BaseCharacterModern:
     # === Attack Commands ===
     def light_attack(self):     # Light Attack -> X
-        kb.tap_key('U')
-
+        kb.press_key('U')
+        time.sleep(0.05)
+        kb.release_key('U')
+        
     def medium_attack(self):    # Medium Attack -> A
-        kb.tap_key('J')
+        kb.press_key('J')
+        time.sleep(0.05)
+        kb.release_key('J')
 
     def heavy_attack(self):     # Heavy Attack -> B
-        kb.tap_key('K')
+        kb.press_key('K')
+        time.sleep(0.05)
+        kb.release_key('K')
 
     def special_attack(self):   # Special Attack (SP) -> Y
-        kb.tap_key('I')
+        kb.press_key('I')
+        time.sleep(0.05)
+        kb.release_key('I')
 
     def throw(self):            # Throw -> LT
-        kb.tap_key('H')
+        kb.press_key('H')
+        time.sleep(0.05)
+        kb.release_key('H')
+
+    def jump(self):
+        kb.press_key('W')
+        time.sleep(0.05)    
+        kb.release_key('W')
 
     def drive_impact(self):     # Drive Impact (Burst) -> LB
         kb.tap_key('Y')

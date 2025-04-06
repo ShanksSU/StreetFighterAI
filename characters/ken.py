@@ -27,6 +27,14 @@ class Ken:
         else:
             self.impl.heavy_punch()
 
+    def throw(self):
+        if self.attack_mode == 'modern':
+            self.impl.throw()
+            
+    def jump(self):
+        if self.attack_mode == 'modern':
+            self.impl.jump()
+
     def hadouken(self):
         """Hadouken"""
         if self.attack_mode == 'modern':
