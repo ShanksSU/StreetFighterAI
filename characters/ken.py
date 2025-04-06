@@ -1,6 +1,6 @@
 from .base_character_classic import BaseCharacterClassic
 from .base_character_modern import BaseCharacterModern
-import script.control_keyboard_keys as kb
+import controls.control_keyboard_keys as kb
 import time
 
 class Ken:
