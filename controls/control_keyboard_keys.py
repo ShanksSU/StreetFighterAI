@@ -1,5 +1,7 @@
+# control_keyboard_keys.py
 import ctypes
 import time
+from enum import Enum
 from contextlib import contextmanager
 
 SendInput = ctypes.windll.user32.SendInput
@@ -148,7 +150,22 @@ dk = {
     "SLASH":        0x35,       "SLA":      0x35,
 }
 
-# 核心按鍵操作
+class Direction(Enum):
+    LEFT    = 'A'
+    DOWN    = 'S'
+    RIGHT   = 'D'
+    UP      = 'W'
+
+class Button(Enum):
+    LIGHT   = 'U'   # Light Attack     -> X
+    MEDIUM  = 'J'   # Medium Attack    -> A
+    HEAVY   = 'K'   # Heavy Attack     -> B
+    SPECIAL = 'I'   # Special Attack   -> Y
+    THROW   = 'H'   # Throw            -> LT
+    IMPACT  = 'Y'   # Drive Impact     -> LB
+    ASSIST  = 'L'   # Assist           -> RT
+    PARRY   = 'O'   # Drive Parry      -> RB
+
 def press_key(key):
     hex_code = dk.get(key.upper())
     if hex_code is None:
@@ -169,14 +186,13 @@ def release_key(key):
     x = Input(ctypes.c_ulong(1), ii)
     SendInput(1, ctypes.pointer(x), ctypes.sizeof(x))
 
-def tap_key(key, delay=0.005):
+def tap_key(key, delay=0.05):
     press_key(key)
     time.sleep(delay)
     release_key(key)
     
 @contextmanager
 def hold_keys(keys):
-    """保持按住多個按鍵"""
     for key in keys:
         press_key(key)
     try:
@@ -184,3 +200,24 @@ def hold_keys(keys):
     finally:
         for key in keys:
             release_key(key)
+
+def press_multiple_keys(keys):
+    for key in keys:
+        press_key(key)
+
+def release_multiple_keys(keys):
+    for key in keys:
+        release_key(key)
+
+def tap_multiple_keys(keys, press_duration=0.05, release_delay=0.005):
+    # Press all keys
+    for key in keys:
+        press_key(key)
+    
+    # Hold for the specified duration
+    time.sleep(press_duration)
+    
+    # Release all keys with small delay between them
+    for key in keys:
+        release_key(key)
+        time.sleep(release_delay)

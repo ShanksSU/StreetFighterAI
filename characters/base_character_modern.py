@@ -1,81 +1,126 @@
+# base_character_modern.py
 import controls.control_keyboard_keys as kb
+from controls.control_keyboard_keys import Direction, Button
 import time
+from enum import Enum
+from functools import wraps
+
+def button_action(tap_duration=0.05):
+    """Decorator for simple button press actions"""
+    def decorator(func):
+        @wraps(func)
+        def wrapper(self, *args, **kwargs):
+            key = func(self, *args, **kwargs)
+            kb.press_key(key)
+            time.sleep(tap_duration)
+            kb.release_key(key)
+            return True
+        return wrapper
+    return decorator
+
 
 class BaseCharacterModern:
+    def __init__(self):
+        # Movement states
+        self.active_Key = set()
+    
     # === Attack Commands ===
-    def light_attack(self):     # Light Attack -> X
-        kb.press_key('U')
-        time.sleep(0.05)
-        kb.release_key('U')
+    @button_action()
+    def light_attack(self):
+        return Button.LIGHT.value
         
-    def medium_attack(self):    # Medium Attack -> A
-        kb.press_key('J')
-        time.sleep(0.05)
-        kb.release_key('J')
+    @button_action()
+    def medium_attack(self):
+        return Button.MEDIUM.value
 
-    def heavy_attack(self):     # Heavy Attack -> B
-        kb.press_key('K')
-        time.sleep(0.05)
-        kb.release_key('K')
+    @button_action()
+    def heavy_attack(self):
+        return Button.HEAVY.value
 
-    def special_attack(self):   # Special Attack (SP) -> Y
-        kb.press_key('I')
-        time.sleep(0.05)
-        kb.release_key('I')
+    @button_action()
+    def special_attack(self):
+        return Button.SPECIAL.value
+    
+    
+    # === Basic Commands ===
+    @button_action()
+    def throw(self):
+        return Button.THROW.value
 
-    def throw(self):            # Throw -> LT
-        kb.press_key('H')
-        time.sleep(0.05)
-        kb.release_key('H')
+    def drive_impact(self):
+        kb.tap_key(Button.IMPACT.value)
 
-    def jump(self):
-        kb.press_key('W')
-        time.sleep(0.05)    
-        kb.release_key('W')
+    def assist(self):
+        kb.tap_key(Button.ASSIST.value)
 
-    def drive_impact(self):     # Drive Impact (Burst) -> LB
-        kb.tap_key('Y')
+    @button_action(tap_duration=0.5)
+    def drive_parry(self):
+        return Button.PARRY.value
 
-    def assist(self):           # Assist -> RT
-        kb.tap_key('L')
-
-    def drive_parry(self):      # Drive Parry -> RB
-        kb.tap_key('O')
-
-    # === Basic Movement (Tap) ===
-    def move_jump(self):        # Jump -> W
-        kb.tap_key('W')
-
-    def move_left(self):        # Move Left -> A
-        kb.tap_key('A')
-
-    def move_crouch(self):      # Crouch -> S
-        kb.tap_key('S')
-
-    def move_right(self):       # Move Right -> D
-        kb.tap_key('D')
-
-    # === Basic Movement (Hold/Release) ===
-    def hold_jump(self):
-        kb.press_key('W')
-
-    def release_jump(self):
-        kb.release_key('W')
-
-    def hold_left(self):
-        kb.press_key('A')
-
-    def release_left(self):
-        kb.release_key('A')
-
-    def hold_crouch(self):
-        kb.press_key('S')
-
-    def release_crouch(self):
-        kb.release_key('S')
-
-    def hold_right(self):
-        kb.press_key('D')
-
-    def release_right(self):
-        kb.release_key('D')
+    # === Hold, Release and Stop Key ===
+    def hold_key(self, Key):
+        """Hold a direction key and track state"""
+        kb.press_key(Key.value)
+        self.active_Key.add(Key)
+        
+    def release_key(self, Key):
+        """Release a direction key and update state"""
+        kb.release_key(Key.value)
+        if Key in self.active_Key:
+            self.active_Key.remove(Key)
+    
+    def stop_movement(self):
+        for Key in list(self.active_Key):
+            self.release_key(Key)
+    
+    # Tap movement actions
+    @button_action()
+    def move_jump(self):
+        return Direction.UP.value
+        
+    def move_left(self):
+        kb.tap_key(Direction.LEFT.value)
+        
+    def move_crouch(self):
+        kb.tap_key(Direction.DOWN.value)
+        
+    def move_right(self):
+        kb.tap_key(Direction.RIGHT.value)
+            
+    def move_continuously(self, direction, duration=0.02):
+        self.stop_movement()
+        self.hold_key(direction)
+        time.sleep(duration)
+        
+    def move_left_continuously(self, duration=0.02):
+        self.move_continuously(Direction.LEFT, duration)
+        
+    def move_right_continuously(self, duration=0.02):
+        self.move_continuously(Direction.RIGHT, duration)
+        
+    def move_crouch_continuously(self, duration=0.02):
+        self.move_continuously(Direction.DOWN, duration)
+    
+    def down_left_continuously(self, duration=0.02):
+        self.stop_movement()
+        self.hold_key(Direction.DOWN)
+        self.hold_key(Direction.LEFT)
+        time.sleep(duration)
+        
+    def down_right_continuously(self, duration=0.02):
+        self.stop_movement()
+        self.hold_key(Direction.DOWN)
+        self.hold_key(Direction.RIGHT)
+        time.sleep(duration)
+        
+    def up_left_continuously(self, duration=0.02):
+        self.stop_movement()
+        self.hold_key(Direction.UP)
+        self.hold_key(Direction.LEFT)
+        time.sleep(duration)
+        
+    def up_right_continuously(self, duration=0.02):
+        self.stop_movement()
+        self.hold_key(Direction.UP)
+        self.hold_key(Direction.RIGHT)
+        time.sleep(duration)
