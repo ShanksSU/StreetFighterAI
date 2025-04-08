@@ -1,7 +1,7 @@
 # ken.py
 from .base_character_classic import BaseCharacterClassic
 from .base_character_modern import BaseCharacterModern, Direction, Button
-import controls.control_keyboard_keys as kb
+import utils.control_keyboard_keys as kb
 import time
 
 class Ken:
@@ -12,12 +12,10 @@ class Ken:
     
     # === Hold, Release and Stop Key ===
     def hold_key(self, Key):
-        """Hold a direction key and track state"""
         kb.press_key(Key.value)
         self.active_Key.add(Key)
         
     def release_key(self, Key):
-        """Release a direction key and update state"""
         kb.release_key(Key.value)
         if Key in self.active_Key:
             self.active_Key.remove(Key)
@@ -81,7 +79,6 @@ class Ken:
         self.stop_movement()
 
     def low_spinning_sweep(self):
-        """Low Spinning Sweep - (Right + Down) + HEAVY"""
         self.stop_movement()
         self.impl.down_right_continuously()
         self.hold_key(Button.HEAVY)
@@ -89,7 +86,6 @@ class Ken:
         self.stop_movement()
 
     def quick_dash(self):
-        """Quick Dash - Medium + Heavy"""
         self.stop_movement()
         self.hold_key(Button.MEDIUM)
         self.hold_key(Button.HEAVY)
@@ -133,5 +129,5 @@ class Ken:
         
     def jump_in_heavy(self):
         self.impl.move_jump()
-        time.sleep(0.3)  # Wait to reach apex of jump
+        time.sleep(0.3)
         self.impl.heavy_attack()

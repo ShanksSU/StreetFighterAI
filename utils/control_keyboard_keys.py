@@ -210,14 +210,11 @@ def release_multiple_keys(keys):
         release_key(key)
 
 def tap_multiple_keys(keys, press_duration=0.05, release_delay=0.005):
-    # Press all keys
     for key in keys:
         press_key(key)
-    
-    # Hold for the specified duration
+
     time.sleep(press_duration)
-    
-    # Release all keys with small delay between them
+
     for key in keys:
         release_key(key)
         time.sleep(release_delay)

@@ -1,12 +1,11 @@
 # base_character_modern.py
-import controls.control_keyboard_keys as kb
-from controls.control_keyboard_keys import Direction, Button
+import utils.control_keyboard_keys as kb
+from utils.control_keyboard_keys import Direction, Button
 import time
 from enum import Enum
 from functools import wraps
 
 def button_action(tap_duration=0.05):
-    """Decorator for simple button press actions"""
     def decorator(func):
         @wraps(func)
         def wrapper(self, *args, **kwargs):
@@ -59,12 +58,10 @@ class BaseCharacterModern:
 
     # === Hold, Release and Stop Key ===
     def hold_key(self, Key):
-        """Hold a direction key and track state"""
         kb.press_key(Key.value)
         self.active_Key.add(Key)
         
     def release_key(self, Key):
-        """Release a direction key and update state"""
         kb.release_key(Key.value)
         if Key in self.active_Key:
             self.active_Key.remove(Key)

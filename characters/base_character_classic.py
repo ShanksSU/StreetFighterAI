@@ -1,4 +1,4 @@
-import controls.control_keyboard_keys as kb
+import utils.control_keyboard_keys as kb
 import time
 
 class BaseCharacterClassic:
